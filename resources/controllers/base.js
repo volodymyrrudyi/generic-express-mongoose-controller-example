@@ -20,116 +20,114 @@ export default class BaseController{
     this.key = key;
   }
 
-  create(data, success, failure) {
-    const model = this.model;
-    const modelName = this.modelName;
-
-    co(function*(){
-      const modelInstance = yield model.create(data);
-      var response = {};
-      response[modelName] = modelInstance;
-      success(response);
-    }).catch(failure);
+  create(data) {
+    return this.model
+      .create(data)
+      .then((modelInstance) => {
+        var response = {};
+        response[this.modelName] = modelInstance;
+        return response;
+      });
   }
 
 
-  read(id, success, failure) {
-    const model = this.model;
-    const modelName = this.modelName;
-    const key = this.key;
+  read(id) {
+    var filter = {};
+    filter[this.key] = id;
 
-    co(function *(){
-
-      var filter = {};
-      filter[key] = id;
-      var modelInstance = yield model.findOne(filter).exec();
+    return this.model
+    .findOne(filter)
+    .then((modelInstance) => {
       var response = {};
-      response[modelName] = modelInstance;
-      success(response);
-    }).catch(failure);
+      response[this.modelName] = modelInstance;
+      return response;
+    });
   }
 
 
-  list(success, failure, range, filters, sorting) {
-    const model = this.model;
-    const modelName = this.modelName;
-
-    co(function *(){
-      var modelInstances = yield model.find({}).limit(MAX_RESULTS).exec();
-      var response = {};
-      response[pluralize(modelName)] = modelInstances;
-      success(response);
-    }).catch(failure);
+  list() {
+    return this.model
+      .find({})
+      .limit(MAX_RESULTS)
+      .then((modelInstances) => {
+        var response = {};
+        response[pluralize(this.modelName)] = modelInstances;
+        return response;
+      });
   }
 
-  remove(id, success, failure) {
-    const model = this.model;
-    const modelName = this.modelName;
-    const key = this.key;
+  remove(id) {
+    const filter = {};
+    filter[this.key] = id;
 
-    co(function*(){
-      var filter = {};
-      filter[key] = id;
-      yield model.remove(filter);
-      success({});
-    }).catch(failure);
+    return this.model
+      .remove(filter)
+      .then(() => {
+        return {};
+      })
   }
 
 
   /**
    */
-  update(id, data, success, failure) {
-    const model = this.model;
-    const modelName = this.modelName;
-    const key = this.key;
+  update(id, data) {
+    var filter = {};
+    filter[this.key] = id;
 
-    co(function *(){
-      var filter = {};
-      filter[key] = id;
-      var modelInstance = yield model.findOne(filter).exec();
-
-      for (var attribute in data){
-        if (data.hasOwnProperty(attribute) && attribute !== key && attribute !== "_id"){
-          modelInstance[attribute] = data[attribute];
+    return this.model
+      .findOne(filter)
+      .then((modelInstance) => {
+        for (var attribute in data){
+          if (data.hasOwnProperty(attribute) && attribute !== key && attribute !== "_id"){
+            modelInstance[attribute] = data[attribute];
+          }
         }
-      }
 
-      var updatedModelInstance = yield modelInstance.save();
-      var response = {};
-      response[modelName] = updatedModelInstance;
-      success(response);
-    }).catch(failure);
+        return modelInstance.save();
+      })
+      .then((modelInstance) => {
+        var response = {};
+        response[this.modelName] = updatedModelInstance;
+        return response;
+      });
   }
 
   init(){
-    const key = this.key;
-    const modelName = this.modelName;
-    const router = Router();
-    const controller = this;
+    const router = new Router();
 
     router.get("/", (req, res) => {
-      controller
-        .list(ok(res), fail(res));
+      this
+        .list()
+        .then(ok(res))
+        .then(null, fail(res));
     });
 
     router.post("/", (req, res) => {
-      controller
-        .create(req.body, ok(res), fail(res));
+      this
+        .create(req.body)
+        .then(ok(res))
+        .then(null, fail(res));
     });
 
     router.get("/:key", (req, res) => {
-      controller
-        .read(req.params.key, ok(res), fail(res));
+      this
+        .read(req.params.key)
+        .then(ok(res))
+        .then(null, fail(res));
     });
 
     router.put("/:key", (req, res) => {
-      controller
-        .update(req.params.key, req.body, ok(res), fail(res));
+      this
+        .update(req.params.key, req.body)
+        .then(ok(res))
+        .then(null, fail(res));
     });
 
     router.delete("/:key", (req, res) => {
-      controller
-        .remove(req.params.key, ok(res), fail(res));
+      this
+        .remove(req.params.key)
+        .then(ok(res))
+        .then(null, fail(res));
     });
 
     return router;

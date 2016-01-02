@@ -17,6 +17,7 @@ export var ok = function(res){
 */
 export var fail = function(res){
   return (error) => {
+    console.log(error);
     res.sendStatus(404).end();
   };
 };
