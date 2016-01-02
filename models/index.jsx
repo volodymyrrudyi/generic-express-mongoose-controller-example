@@ -18,6 +18,9 @@ const LanguageSchema = new mongoose.Schema({
   name: String
 });
 
-export { mongoose.model('Country', CountrySchema)   as Country    };
-export { mongoose.model('City', CitySchema)         as City       };
-export { mongoose.model('Language', LanguageSchema) as Language   };
+
+const Country  = mongoose.model('Country', CountrySchema);
+const City     = mongoose.model('City', CitySchema);
+const Language = mongoose.model('Language', LanguageSchema);
+
+export {Country, City, Language}
