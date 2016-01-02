@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import co from "co";
-import pluralize from "pluralize";
+import pluralize  from "pluralize";
 import {ok, fail} from "./utils";
+
 const MAX_RESULTS = 100;
 
 /**
@@ -92,7 +92,7 @@ export default class BaseController{
       });
   }
 
-  init(){
+  route(){
     const router = new Router();
 
     router.get("/", (req, res) => {

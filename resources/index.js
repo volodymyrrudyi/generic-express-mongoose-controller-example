@@ -6,8 +6,8 @@ import { CountriesController,
 
 export default function() {
 	var api = Router();
-	api.use('/countries', new CountriesController().init());
-	api.use('/cities', new CitiesController().init());
-	api.use('/languages', new LanguagesController().init());
+	api.use('/countries', new CountriesController().route());
+	api.use('/cities', new CitiesController().route());
+	api.use('/languages', new LanguagesController().route());
 	return api;
 }

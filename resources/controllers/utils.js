@@ -1,7 +1,7 @@
 /**
   Returns a function that will write the result as a JSON to the response
 */
-export var ok = function(res){
+export function ok(res){
   return (data) => {
     res.json(data);
   };
@@ -15,7 +15,7 @@ export var ok = function(res){
   Not enough privileges - 401 Unauthorized
   Unknown error - 500 Internal server error
 */
-export var fail = function(res){
+export function fail(res){
   return (error) => {
     console.log(error);
     res.sendStatus(404).end();

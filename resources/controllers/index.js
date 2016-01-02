@@ -1,5 +1,5 @@
-import BaseController from './base';
-import {Country, City, Language} from '../../models';
+import BaseController              from './base';
+import { Country, City, Language } from '../../models';
 
 export class CountriesController extends BaseController{
   constructor(){
