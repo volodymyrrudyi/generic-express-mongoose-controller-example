@@ -56,7 +56,7 @@ export default class BaseController{
       });
   }
 
-  remove(id) {
+  delete(id) {
     const filter = {};
     filter[this.key] = id;
 
@@ -78,7 +78,7 @@ export default class BaseController{
       .findOne(filter)
       .then((modelInstance) => {
         for (var attribute in data){
-          if (data.hasOwnProperty(attribute) && attribute !== key && attribute !== "_id"){
+          if (data.hasOwnProperty(attribute) && attribute !== this.key && attribute !== "_id"){
             modelInstance[attribute] = data[attribute];
           }
         }
@@ -87,7 +87,7 @@ export default class BaseController{
       })
       .then((modelInstance) => {
         var response = {};
-        response[this.modelName] = updatedModelInstance;
+        response[this.modelName] = modelInstance;
         return response;
       });
   }
@@ -125,7 +125,7 @@ export default class BaseController{
 
     router.delete("/:key", (req, res) => {
       this
-        .remove(req.params.key)
+        .delete(req.params.key)
         .then(ok(res))
         .then(null, fail(res));
     });
